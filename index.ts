@@ -1,9 +1,13 @@
 import nodeResolve from "@rollup/plugin-node-resolve";
 import react from "@vitejs/plugin-react";
-import { join } from "path";
-import { BuildOptions, defineConfig as defineViteConfig, PluginOption } from "vite";
-import { externalizeDeps } from "vite-plugin-externalize-deps";
 import { promises as fsPromises } from "fs";
+import { join } from "path";
+import {
+  BuildOptions,
+  defineConfig as defineViteConfig,
+  PluginOption,
+} from "vite";
+import { externalizeDeps } from "vite-plugin-externalize-deps";
 
 async function loadPackageJson(dir: string) {
   const pkgPath = join(dir, "package.json");
@@ -41,15 +45,17 @@ function fiftyoneRollupPlugin() {
  * @param dir root directory where package.json and vite.config.js are located. Usually you'll just want to pass `__dirname`.
  * Or, if you're using modules, you'll want to pass `dirname(fileURLToPath(import.meta.url))`.
  *
- * @param forceBundleDependencies an array of either exact package names or regex patterns that you want to force bundle.
+ * @param opts.forceBundleDependencies an array of either exact package names or regex patterns that you want to force bundle.
  * Use this for any third-party dependencies that you introduce in your plugin that are not part of the global scope.
+ * 
+ * @param opts.buildConfigOverride override the default build config with your own options.
  */
 export async function defineConfig(
   dir: string,
-  forceBundleDependencies: Array<string | RegExp> = [],
   opts: {
     buildConfigOverride?: BuildOptions;
-  }
+    forceBundleDependencies?: Array<string | RegExp>;
+  } = {}
 ) {
   const pkg = await loadPackageJson(dir);
 
@@ -59,14 +65,13 @@ export async function defineConfig(
       fiftyoneRollupPlugin(),
       nodeResolve(),
       react({ jsxRuntime: "classic" }),
-      react(),
       externalizeDeps({
         deps: true,
         devDeps: false,
         useFile: join(process.cwd(), "package.json"),
         // we want to bundle in the following dependencies and not rely on
         // them being available in the global scope
-        except: forceBundleDependencies,
+        except: opts?.forceBundleDependencies ?? [],
       }),
     ],
     build: {
@@ -95,7 +100,7 @@ export async function defineConfig(
           },
         },
       },
-      ...opts.buildConfigOverride
+      ...(opts?.buildConfigOverride ?? {}),
     },
     define: {
       "process.env.NODE_ENV": '"development"',

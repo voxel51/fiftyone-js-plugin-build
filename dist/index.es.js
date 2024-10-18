@@ -1,55 +1,54 @@
-import a from "@rollup/plugin-node-resolve";
+import r from "@rollup/plugin-node-resolve";
 import s from "@vitejs/plugin-react";
+import { promises as f } from "node:fs";
 import { join as i } from "node:path";
-import { defineConfig as f } from "vite";
+import { defineConfig as a } from "vite";
 import { externalizeDeps as p } from "vite-plugin-externalize-deps";
-import { promises as m } from "node:fs";
-async function l(e) {
-  const t = i(e, "package.json"), o = await m.readFile(t, "utf-8");
-  return JSON.parse(o);
+async function l(n) {
+  const e = i(n, "package.json"), t = await f.readFile(e, "utf-8");
+  return JSON.parse(t);
 }
-function c() {
-  const { FIFTYONE_DIR: e } = process.env;
-  if (!e)
+function m() {
+  const { FIFTYONE_DIR: n } = process.env;
+  if (!n)
     throw new Error(
       "FIFTYONE_DIR environment variable not set. This is required to resolve @fiftyone/* imports."
     );
   return {
     name: "fiftyone-bundle-private-packages",
     enforce: "pre",
-    resolveId: (t) => {
-      if (t.startsWith("@fiftyone")) {
-        const o = t.split("/")[1], n = `${e}/app/packages/${o}`;
-        return this.resolve(n, t, { skipSelf: !0 });
+    resolveId: (e) => {
+      if (e.startsWith("@fiftyone")) {
+        const t = e.split("/")[1], o = `${n}/app/packages/${t}`;
+        return this.resolve(o, e, { skipSelf: !0 });
       }
       return null;
     }
   };
 }
-async function k(e, t = [], o) {
-  const n = await l(e);
-  return f({
+async function v(n, e = {}) {
+  const t = await l(n);
+  return a({
     mode: "development",
     plugins: [
-      c(),
-      a(),
+      m(),
+      r(),
       s({ jsxRuntime: "classic" }),
-      s(),
       p({
         deps: !0,
         devDeps: !1,
         useFile: i(process.cwd(), "package.json"),
         // we want to bundle in the following dependencies and not rely on
         // them being available in the global scope
-        except: t
+        except: (e == null ? void 0 : e.forceBundleDependencies) ?? []
       })
     ],
     build: {
       minify: !0,
       lib: {
-        entry: i(e, n.main),
-        name: n.name,
-        fileName: (r) => `index.${r}.js`,
+        entry: i(n, t.main),
+        name: t.name,
+        fileName: (o) => `index.${o}.js`,
         formats: ["umd"]
       },
       rollupOptions: {
@@ -70,7 +69,7 @@ async function k(e, t = [], o) {
           }
         }
       },
-      ...o.buildConfigOverride
+      ...(e == null ? void 0 : e.buildConfigOverride) ?? {}
     },
     define: {
       "process.env.NODE_ENV": '"development"'
@@ -81,5 +80,5 @@ async function k(e, t = [], o) {
   });
 }
 export {
-  k as defineConfig
+  v as defineConfig
 };
