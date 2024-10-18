@@ -4,8 +4,6 @@ import { join } from "path";
 import { defineConfig as defineViteConfig, PluginOption } from "vite";
 import { externalizeDeps } from "vite-plugin-externalize-deps";
 
-// import pkg from "../package.json" assert { type: "json" };
-
 function fiftyoneRollupPlugin() {
   const { FIFTYONE_DIR } = process.env;
 
@@ -32,13 +30,16 @@ function fiftyoneRollupPlugin() {
 // https://vitejs.dev/config/
 /**
  *
- * @param {string} dir root directory where package.json and vite.config.js are located. Usually you'll just want to pass `__dirname`.
+ * @param dir root directory where package.json and vite.config.js are located. Usually you'll just want to pass `__dirname`.
  * Or, if you're using modules, you'll want to pass `dirname(fileURLToPath(import.meta.url))`.
  *
- * @param {Array<string | RegExp>} forceBundleDependencies an array of either exact package names or regex patterns that you want to force bundle.
+ * @param forceBundleDependencies an array of either exact package names or regex patterns that you want to force bundle.
  * Use this for any third-party dependencies that you introduce in your plugin that are not part of the global scope.
  */
-export function defineConfig(dir, forceBundleDependencies = []) {
+export function defineConfig(
+  dir: string,
+  forceBundleDependencies: Array<string | RegExp> = []
+) {
   const pkg = require(join(dir, "package.json"));
   return defineViteConfig({
     mode: "development",
