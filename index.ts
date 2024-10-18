@@ -11,7 +11,7 @@ function fiftyoneRollupPlugin() {
     throw new Error(
       `FIFTYONE_DIR environment variable not set. This is required to resolve @fiftyone/* imports.`
     );
-  }
+  } 
 
   return {
     name: "fiftyone-bundle-private-packages",
@@ -20,6 +20,7 @@ function fiftyoneRollupPlugin() {
       if (source.startsWith("@fiftyone")) {
         const pkg = source.split("/")[1];
         const modulePath = `${FIFTYONE_DIR}/app/packages/${pkg}`;
+        // @ts-ignore
         return this.resolve(modulePath, source, { skipSelf: true });
       }
       return null;
