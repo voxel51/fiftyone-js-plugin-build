@@ -1,6 +1,6 @@
 {
   "name": "@voxel51/fiftyone-js-plugin-build",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Build tools for fiftyone JS plugins",
   "main": "dist/index.cjs.js",
   "type": "module",
