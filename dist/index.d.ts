@@ -6,4 +6,4 @@
  * @param forceBundleDependencies an array of either exact package names or regex patterns that you want to force bundle.
  * Use this for any third-party dependencies that you introduce in your plugin that are not part of the global scope.
  */
-export declare function defineConfig(dir: string, forceBundleDependencies?: Array<string | RegExp>): import('vite').UserConfig;
+export declare function defineConfig(dir: string, forceBundleDependencies?: Array<string | RegExp>): Promise<import('vite').UserConfig>;

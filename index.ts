@@ -3,6 +3,13 @@ import react from "@vitejs/plugin-react";
 import { join } from "path";
 import { defineConfig as defineViteConfig, PluginOption } from "vite";
 import { externalizeDeps } from "vite-plugin-externalize-deps";
+import { promises as fsPromises } from "fs";
+
+async function loadPackageJson(dir: string) {
+  const pkgPath = join(dir, "package.json");
+  const pkgData = await fsPromises.readFile(pkgPath, "utf-8");
+  return JSON.parse(pkgData);
+}
 
 function fiftyoneRollupPlugin() {
   const { FIFTYONE_DIR } = process.env;
@@ -11,7 +18,7 @@ function fiftyoneRollupPlugin() {
     throw new Error(
       `FIFTYONE_DIR environment variable not set. This is required to resolve @fiftyone/* imports.`
     );
-  } 
+  }
 
   return {
     name: "fiftyone-bundle-private-packages",
@@ -37,11 +44,12 @@ function fiftyoneRollupPlugin() {
  * @param forceBundleDependencies an array of either exact package names or regex patterns that you want to force bundle.
  * Use this for any third-party dependencies that you introduce in your plugin that are not part of the global scope.
  */
-export function defineConfig(
+export async function defineConfig(
   dir: string,
   forceBundleDependencies: Array<string | RegExp> = []
 ) {
-  const pkg = require(join(dir, "package.json"));
+  const pkg = await loadPackageJson(dir);
+
   return defineViteConfig({
     mode: "development",
     plugins: [
