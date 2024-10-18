@@ -1,14 +1,14 @@
-import r from "@rollup/plugin-node-resolve";
+import a from "@rollup/plugin-node-resolve";
 import s from "@vitejs/plugin-react";
 import { join as i } from "node:path";
-import { defineConfig as a } from "vite";
-import { externalizeDeps as f } from "vite-plugin-externalize-deps";
-import { promises as p } from "node:fs";
-async function m(e) {
-  const t = i(e, "package.json"), o = await p.readFile(t, "utf-8");
+import { defineConfig as f } from "vite";
+import { externalizeDeps as p } from "vite-plugin-externalize-deps";
+import { promises as m } from "node:fs";
+async function l(e) {
+  const t = i(e, "package.json"), o = await m.readFile(t, "utf-8");
   return JSON.parse(o);
 }
-function l() {
+function c() {
   const { FIFTYONE_DIR: e } = process.env;
   if (!e)
     throw new Error(
@@ -26,16 +26,16 @@ function l() {
     }
   };
 }
-async function v(e, t = []) {
-  const o = await m(e);
-  return a({
+async function k(e, t = [], o) {
+  const n = await l(e);
+  return f({
     mode: "development",
     plugins: [
-      l(),
-      r(),
+      c(),
+      a(),
       s({ jsxRuntime: "classic" }),
       s(),
-      f({
+      p({
         deps: !0,
         devDeps: !1,
         useFile: i(process.cwd(), "package.json"),
@@ -47,9 +47,9 @@ async function v(e, t = []) {
     build: {
       minify: !0,
       lib: {
-        entry: i(e, o.main),
-        name: o.name,
-        fileName: (n) => `index.${n}.js`,
+        entry: i(e, n.main),
+        name: n.name,
+        fileName: (r) => `index.${r}.js`,
         formats: ["umd"]
       },
       rollupOptions: {
@@ -58,6 +58,7 @@ async function v(e, t = []) {
             react: "React",
             "react-dom": "ReactDOM",
             "jsx-runtime": "jsx",
+            "react/jsx-runtime": "jsx",
             "@fiftyone/state": "__fos__",
             "@fiftyone/plugins": "__fop__",
             "@fiftyone/operators": "__foo__",
@@ -68,7 +69,8 @@ async function v(e, t = []) {
             "styled-components": "__styled__"
           }
         }
-      }
+      },
+      ...o.buildConfigOverride
     },
     define: {
       "process.env.NODE_ENV": '"development"'
@@ -79,5 +81,5 @@ async function v(e, t = []) {
   });
 }
 export {
-  v as defineConfig
+  k as defineConfig
 };

@@ -1,7 +1,7 @@
 import nodeResolve from "@rollup/plugin-node-resolve";
 import react from "@vitejs/plugin-react";
 import { join } from "path";
-import { defineConfig as defineViteConfig, PluginOption } from "vite";
+import { BuildOptions, defineConfig as defineViteConfig, PluginOption } from "vite";
 import { externalizeDeps } from "vite-plugin-externalize-deps";
 import { promises as fsPromises } from "fs";
 
@@ -46,7 +46,10 @@ function fiftyoneRollupPlugin() {
  */
 export async function defineConfig(
   dir: string,
-  forceBundleDependencies: Array<string | RegExp> = []
+  forceBundleDependencies: Array<string | RegExp> = [],
+  opts: {
+    buildConfigOverride?: BuildOptions;
+  }
 ) {
   const pkg = await loadPackageJson(dir);
 
@@ -80,6 +83,7 @@ export async function defineConfig(
             react: "React",
             "react-dom": "ReactDOM",
             "jsx-runtime": "jsx",
+            "react/jsx-runtime": "jsx",
             "@fiftyone/state": "__fos__",
             "@fiftyone/plugins": "__fop__",
             "@fiftyone/operators": "__foo__",
@@ -91,6 +95,7 @@ export async function defineConfig(
           },
         },
       },
+      ...opts.buildConfigOverride
     },
     define: {
       "process.env.NODE_ENV": '"development"',
