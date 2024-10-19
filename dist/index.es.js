@@ -1,14 +1,14 @@
 import r from "@rollup/plugin-node-resolve";
-import s from "@vitejs/plugin-react";
-import { promises as f } from "node:fs";
-import { join as i } from "node:path";
-import { defineConfig as a } from "vite";
-import { externalizeDeps as p } from "vite-plugin-externalize-deps";
-async function l(n) {
-  const e = i(n, "package.json"), t = await f.readFile(e, "utf-8");
-  return JSON.parse(t);
+import f from "@vitejs/plugin-react";
+import { promises as a } from "node:fs";
+import { join as o } from "node:path";
+import { defineConfig as s } from "vite";
+import { externalizeDeps as l } from "vite-plugin-externalize-deps";
+async function m(n) {
+  const e = o(n, "package.json"), i = await a.readFile(e, "utf-8");
+  return JSON.parse(i);
 }
-function m() {
+function c() {
   const { FIFTYONE_DIR: n } = process.env;
   if (!n)
     throw new Error(
@@ -19,36 +19,37 @@ function m() {
     enforce: "pre",
     resolveId: (e) => {
       if (e.startsWith("@fiftyone")) {
-        const t = e.split("/")[1], o = `${n}/app/packages/${t}`;
-        return this.resolve(o, e, { skipSelf: !0 });
+        const i = e.split("/")[1], t = `${n}/app/packages/${i}`;
+        return this.resolve(t, e, { skipSelf: !0 });
       }
       return null;
     }
   };
 }
 async function v(n, e = {}) {
-  const t = await l(n);
-  return a({
+  const i = await m(n);
+  return s({
     mode: "development",
     plugins: [
-      m(),
+      c(),
       r(),
-      s({ jsxRuntime: "classic" }),
-      p({
+      f({ jsxRuntime: "classic" }),
+      l({
         deps: !0,
         devDeps: !1,
-        useFile: i(process.cwd(), "package.json"),
+        useFile: o(process.cwd(), "package.json"),
         // we want to bundle in the following dependencies and not rely on
         // them being available in the global scope
         except: (e == null ? void 0 : e.forceBundleDependencies) ?? []
-      })
+      }),
+      ...(e == null ? void 0 : e.plugins) ?? []
     ],
     build: {
       minify: !0,
       lib: {
-        entry: i(n, t.main),
-        name: t.name,
-        fileName: (o) => `index.${o}.js`,
+        entry: o(n, i.main),
+        name: i.name,
+        fileName: (t) => `index.${t}.js`,
         formats: ["umd"]
       },
       rollupOptions: {

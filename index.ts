@@ -49,6 +49,8 @@ function fiftyoneRollupPlugin() {
  * Use this for any third-party dependencies that you introduce in your plugin that are not part of the global scope.
  *
  * @param opts.buildConfigOverride override the default build config with your own options.
+ * 
+ * @param opts.plugins additional plugins to include in the Vite config.
  */
 export async function defineConfig(
   dir: string,
