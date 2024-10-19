@@ -47,7 +47,7 @@ function fiftyoneRollupPlugin() {
  *
  * @param opts.forceBundleDependencies an array of either exact package names or regex patterns that you want to force bundle.
  * Use this for any third-party dependencies that you introduce in your plugin that are not part of the global scope.
- * 
+ *
  * @param opts.buildConfigOverride override the default build config with your own options.
  */
 export async function defineConfig(
@@ -55,6 +55,7 @@ export async function defineConfig(
   opts: {
     buildConfigOverride?: BuildOptions;
     forceBundleDependencies?: Array<string | RegExp>;
+    plugins?: PluginOption[];
   } = {}
 ) {
   const pkg = await loadPackageJson(dir);
@@ -73,6 +74,7 @@ export async function defineConfig(
         // them being available in the global scope
         except: opts?.forceBundleDependencies ?? [],
       }),
+      ...(opts?.plugins ?? []),
     ],
     build: {
       minify: true,
