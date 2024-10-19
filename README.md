@@ -1,6 +1,6 @@
-# Fiftyone JS Plugin Build Utils
+# FiftyOne JS Plugin Build Utils
 
-This repository contains utilities for building a Fiftyone JS plugin.
+This repository contains utilities for building a FiftyOne JS plugin.
 
 ## Getting Started
 
