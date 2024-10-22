@@ -9,6 +9,15 @@ import {
 } from "vite";
 import { externalizeDeps } from "vite-plugin-externalize-deps";
 
+const FO_EXTERNALIZED_IGNORE_LIST = [
+  "@fiftyone/components",
+  "@fiftyone/operators",
+  "@fiftyone/state",
+  "@fiftyone/utilities",
+  "@fiftyone/spaces",
+  "@fiftyone/plugins",
+];
+
 async function loadPackageJson(dir: string) {
   const pkgPath = join(dir, "package.json");
   const pkgData = await fsPromises.readFile(pkgPath, "utf-8");
@@ -28,7 +37,10 @@ function fiftyoneRollupPlugin() {
     name: "fiftyone-bundle-private-packages",
     enforce: "pre",
     resolveId: (source) => {
-      if (source.startsWith("@fiftyone")) {
+      if (
+        source.startsWith("@fiftyone") &&
+        !FO_EXTERNALIZED_IGNORE_LIST.includes(source)
+      ) {
         const pkg = source.split("/")[1];
         const modulePath = `${FIFTYONE_DIR}/app/packages/${pkg}`;
         // @ts-ignore
@@ -49,7 +61,7 @@ function fiftyoneRollupPlugin() {
  * Use this for any third-party dependencies that you introduce in your plugin that are not part of the global scope.
  *
  * @param opts.buildConfigOverride override the default build config with your own options.
- * 
+ *
  * @param opts.plugins additional plugins to include in the Vite config.
  */
 export async function defineConfig(
