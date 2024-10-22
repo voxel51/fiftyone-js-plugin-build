@@ -99,6 +99,7 @@ export async function defineConfig(
         formats: ["umd"],
       },
       rollupOptions: {
+        external: FO_EXTERNALIZED_IGNORE_LIST,
         output: {
           globals: {
             react: "React",

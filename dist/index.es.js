@@ -1,10 +1,10 @@
-import f from "@rollup/plugin-node-resolve";
-import r from "@vitejs/plugin-react";
-import { promises as s } from "node:fs";
+import r from "@rollup/plugin-node-resolve";
+import s from "@vitejs/plugin-react";
+import { promises as a } from "node:fs";
 import { join as o } from "node:path";
-import { defineConfig as a } from "vite";
-import { externalizeDeps as l } from "vite-plugin-externalize-deps";
-const c = [
+import { defineConfig as l } from "vite";
+import { externalizeDeps as c } from "vite-plugin-externalize-deps";
+const f = [
   "@fiftyone/components",
   "@fiftyone/operators",
   "@fiftyone/state",
@@ -13,7 +13,7 @@ const c = [
   "@fiftyone/plugins"
 ];
 async function m(n) {
-  const e = o(n, "package.json"), i = await s.readFile(e, "utf-8");
+  const e = o(n, "package.json"), i = await a.readFile(e, "utf-8");
   return JSON.parse(i);
 }
 function p() {
@@ -26,7 +26,7 @@ function p() {
     name: "fiftyone-bundle-private-packages",
     enforce: "pre",
     resolveId: (e) => {
-      if (e.startsWith("@fiftyone") && !c.includes(e)) {
+      if (e.startsWith("@fiftyone") && !f.includes(e)) {
         const i = e.split("/")[1], t = `${n}/app/packages/${i}`;
         return this.resolve(t, e, { skipSelf: !0 });
       }
@@ -34,15 +34,15 @@ function p() {
     }
   };
 }
-async function k(n, e = {}) {
+async function x(n, e = {}) {
   const i = await m(n);
-  return a({
+  return l({
     mode: "development",
     plugins: [
       p(),
-      f(),
-      r({ jsxRuntime: "classic" }),
-      l({
+      r(),
+      s({ jsxRuntime: "classic" }),
+      c({
         deps: !0,
         devDeps: !1,
         useFile: o(process.cwd(), "package.json"),
@@ -61,6 +61,7 @@ async function k(n, e = {}) {
         formats: ["umd"]
       },
       rollupOptions: {
+        external: f,
         output: {
           globals: {
             react: "React",
@@ -89,5 +90,5 @@ async function k(n, e = {}) {
   });
 }
 export {
-  k as defineConfig
+  x as defineConfig
 };
