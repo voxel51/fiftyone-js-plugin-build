@@ -1,16 +1,19 @@
-import r from "@rollup/plugin-node-resolve";
+import f from "@rollup/plugin-node-resolve";
 import s from "@vitejs/plugin-react";
 import { promises as a } from "node:fs";
 import { join as o } from "node:path";
 import { defineConfig as l } from "vite";
 import { externalizeDeps as c } from "vite-plugin-externalize-deps";
-const f = [
+const r = [
   "@fiftyone/components",
   "@fiftyone/operators",
   "@fiftyone/state",
   "@fiftyone/utilities",
   "@fiftyone/spaces",
-  "@fiftyone/plugins"
+  "@fiftyone/plugins",
+  "@mui/material",
+  "styled-components",
+  "recoil"
 ];
 async function m(n) {
   const e = o(n, "package.json"), i = await a.readFile(e, "utf-8");
@@ -26,7 +29,7 @@ function p() {
     name: "fiftyone-bundle-private-packages",
     enforce: "pre",
     resolveId: (e) => {
-      if (e.startsWith("@fiftyone") && !f.includes(e)) {
+      if (e.startsWith("@fiftyone") && !r.includes(e)) {
         const i = e.split("/")[1], t = `${n}/app/packages/${i}`;
         return this.resolve(t, e, { skipSelf: !0 });
       }
@@ -40,7 +43,7 @@ async function x(n, e = {}) {
     mode: "development",
     plugins: [
       p(),
-      r(),
+      f(),
       s({ jsxRuntime: "classic" }),
       c({
         deps: !0,
@@ -61,7 +64,7 @@ async function x(n, e = {}) {
         formats: ["umd"]
       },
       rollupOptions: {
-        external: f,
+        external: r,
         output: {
           globals: {
             react: "React",

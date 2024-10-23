@@ -16,6 +16,9 @@ const FO_EXTERNALIZED_IGNORE_LIST = [
   "@fiftyone/utilities",
   "@fiftyone/spaces",
   "@fiftyone/plugins",
+  "@mui/material",
+  "styled-components",
+  "recoil",
 ];
 
 async function loadPackageJson(dir: string) {
