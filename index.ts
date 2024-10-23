@@ -115,6 +115,7 @@ export async function defineConfig(
         output: {
           globals: {
             react: "React",
+            recoil: "recoil",
             "react-dom": "ReactDOM",
             "jsx-runtime": "jsx",
             "react/jsx-runtime": "jsx",
@@ -124,6 +125,15 @@ export async function defineConfig(
             "@fiftyone/components": "__foc__",
             "@fiftyone/utilities": "__fou__",
             "@fiftyone/spaces": "__fosp__",
+            "@fiftyone/aggregations": "__foa__",
+            "@fiftyone/core": "__focore__",
+            "@fiftyone/embeddings": "__foe__",
+            "@fiftyone/looker": "__fol__",
+            "@fiftyone/map": "__fom__",
+            "@fiftyone/playback": "__fopb__",
+            "@fiftyone/spotlight": "__fosl__",
+            "@fiftyone/flashlight": "__fof__",
+            "@fiftyone/looker-3d": "__fol3d__",
             "@mui/material": "__mui__",
             "styled-components": "__styled__",
           },

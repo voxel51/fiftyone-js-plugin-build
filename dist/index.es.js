@@ -1,10 +1,10 @@
 import r from "@rollup/plugin-node-resolve";
-import s from "@vitejs/plugin-react";
+import _ from "@vitejs/plugin-react";
 import { promises as a } from "node:fs";
-import { join as o } from "node:path";
-import { defineConfig as l } from "vite";
-import { externalizeDeps as c } from "vite-plugin-externalize-deps";
-const f = [
+import { join as n } from "node:path";
+import { defineConfig as s } from "vite";
+import { externalizeDeps as l } from "vite-plugin-externalize-deps";
+const t = [
   "@fiftyone/components",
   "@fiftyone/operators",
   "@fiftyone/state",
@@ -24,13 +24,13 @@ const f = [
   "styled-components",
   "recoil"
 ];
-async function m(n) {
-  const e = o(n, "package.json"), i = await a.readFile(e, "utf-8");
+async function c(o) {
+  const e = n(o, "package.json"), i = await a.readFile(e, "utf-8");
   return JSON.parse(i);
 }
-function p() {
-  const { FIFTYONE_DIR: n } = process.env;
-  if (!n)
+function m() {
+  const { FIFTYONE_DIR: o } = process.env;
+  if (!o)
     throw new Error(
       "FIFTYONE_DIR environment variable not set. This is required to resolve @fiftyone/* imports."
     );
@@ -38,26 +38,26 @@ function p() {
     name: "fiftyone-bundle-private-packages",
     enforce: "pre",
     resolveId: (e) => {
-      if (e.startsWith("@fiftyone") && !f.includes(e)) {
-        const i = e.split("/")[1], t = `${n}/app/packages/${i}`;
-        return this.resolve(t, e, { skipSelf: !0 });
+      if (e.startsWith("@fiftyone") && !t.includes(e)) {
+        const i = e.split("/")[1], f = `${o}/app/packages/${i}`;
+        return this.resolve(f, e, { skipSelf: !0 });
       }
       return null;
     }
   };
 }
-async function v(n, e = {}) {
-  const i = await m(n);
-  return l({
+async function v(o, e = {}) {
+  const i = await c(o);
+  return s({
     mode: "development",
     plugins: [
-      p(),
+      m(),
       r(),
-      s({ jsxRuntime: "classic" }),
-      c({
+      _({ jsxRuntime: "classic" }),
+      l({
         deps: !0,
         devDeps: !1,
-        useFile: o(process.cwd(), "package.json"),
+        useFile: n(process.cwd(), "package.json"),
         // we want to bundle in the following dependencies and not rely on
         // them being available in the global scope
         except: (e == null ? void 0 : e.forceBundleDependencies) ?? []
@@ -67,16 +67,17 @@ async function v(n, e = {}) {
     build: {
       minify: !0,
       lib: {
-        entry: o(n, i.main),
+        entry: n(o, i.main),
         name: i.name,
-        fileName: (t) => `index.${t}.js`,
+        fileName: (f) => `index.${f}.js`,
         formats: ["umd"]
       },
       rollupOptions: {
-        external: f,
+        external: t,
         output: {
           globals: {
             react: "React",
+            recoil: "recoil",
             "react-dom": "ReactDOM",
             "jsx-runtime": "jsx",
             "react/jsx-runtime": "jsx",
@@ -86,6 +87,15 @@ async function v(n, e = {}) {
             "@fiftyone/components": "__foc__",
             "@fiftyone/utilities": "__fou__",
             "@fiftyone/spaces": "__fosp__",
+            "@fiftyone/aggregations": "__foa__",
+            "@fiftyone/core": "__focore__",
+            "@fiftyone/embeddings": "__foe__",
+            "@fiftyone/looker": "__fol__",
+            "@fiftyone/map": "__fom__",
+            "@fiftyone/playback": "__fopb__",
+            "@fiftyone/spotlight": "__fosl__",
+            "@fiftyone/flashlight": "__fof__",
+            "@fiftyone/looker-3d": "__fol3d__",
             "@mui/material": "__mui__",
             "styled-components": "__styled__"
           }
