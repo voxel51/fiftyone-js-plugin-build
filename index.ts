@@ -28,6 +28,8 @@ const FO_EXTERNALIZED_IGNORE_LIST = [
   "@mui/material",
   "styled-components",
   "recoil",
+  "react",
+  "react-dom",
 ];
 
 async function loadPackageJson(dir: string) {
@@ -99,6 +101,7 @@ export async function defineConfig(
         // we want to bundle in the following dependencies and not rely on
         // them being available in the global scope
         except: opts?.forceBundleDependencies ?? [],
+        include: FO_EXTERNALIZED_IGNORE_LIST,
       }),
       ...(opts?.plugins ?? []),
     ],
@@ -111,7 +114,6 @@ export async function defineConfig(
         formats: ["umd"],
       },
       rollupOptions: {
-        external: FO_EXTERNALIZED_IGNORE_LIST,
         output: {
           globals: {
             react: "React",

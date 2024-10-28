@@ -22,7 +22,9 @@ const t = [
   "@fiftyone/looker-3d",
   "@mui/material",
   "styled-components",
-  "recoil"
+  "recoil",
+  "react",
+  "react-dom"
 ];
 async function c(o) {
   const e = n(o, "package.json"), i = await a.readFile(e, "utf-8");
@@ -60,7 +62,8 @@ async function v(o, e = {}) {
         useFile: n(process.cwd(), "package.json"),
         // we want to bundle in the following dependencies and not rely on
         // them being available in the global scope
-        except: (e == null ? void 0 : e.forceBundleDependencies) ?? []
+        except: (e == null ? void 0 : e.forceBundleDependencies) ?? [],
+        include: t
       }),
       ...(e == null ? void 0 : e.plugins) ?? []
     ],
@@ -73,7 +76,6 @@ async function v(o, e = {}) {
         formats: ["umd"]
       },
       rollupOptions: {
-        external: t,
         output: {
           globals: {
             react: "React",
