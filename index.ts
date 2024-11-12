@@ -6,6 +6,7 @@ import {
   BuildOptions,
   defineConfig as defineViteConfig,
   PluginOption,
+  UserConfig,
 } from "vite";
 import { externalizeDeps } from "vite-plugin-externalize-deps";
 
@@ -77,6 +78,8 @@ function fiftyoneRollupPlugin() {
  * @param opts.buildConfigOverride override the default build config with your own options.
  *
  * @param opts.plugins additional plugins to include in the Vite config.
+ *
+ * @param opts.vite additional Vite config options (except `build` and `plugins`, which are handled separately).
  */
 export async function defineConfig(
   dir: string,
@@ -84,6 +87,7 @@ export async function defineConfig(
     buildConfigOverride?: BuildOptions;
     forceBundleDependencies?: Array<string | RegExp>;
     plugins?: PluginOption[];
+    vite?: Omit<UserConfig, "plugins" | "build">;
   } = {}
 ) {
   const pkg = await loadPackageJson(dir);
@@ -149,5 +153,6 @@ export async function defineConfig(
     optimizeDeps: {
       exclude: ["react", "react-dom"],
     },
+    ...(opts?.vite ?? {}),
   });
 }
