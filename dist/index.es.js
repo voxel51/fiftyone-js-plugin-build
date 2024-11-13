@@ -110,7 +110,8 @@ async function v(o, e = {}) {
     },
     optimizeDeps: {
       exclude: ["react", "react-dom"]
-    }
+    },
+    ...(e == null ? void 0 : e.vite) ?? {}
   });
 }
 export {

@@ -1,4 +1,4 @@
-import { BuildOptions, PluginOption } from 'vite';
+import { BuildOptions, PluginOption, UserConfig } from 'vite';
 /**
  *
  * @param dir root directory where package.json and vite.config.js are located. Usually you'll just want to pass `__dirname`.
@@ -10,9 +10,12 @@ import { BuildOptions, PluginOption } from 'vite';
  * @param opts.buildConfigOverride override the default build config with your own options.
  *
  * @param opts.plugins additional plugins to include in the Vite config.
+ *
+ * @param opts.vite additional Vite config options (except `build` and `plugins`, which are handled separately).
  */
 export declare function defineConfig(dir: string, opts?: {
     buildConfigOverride?: BuildOptions;
     forceBundleDependencies?: Array<string | RegExp>;
     plugins?: PluginOption[];
-}): Promise<import('vite').UserConfig>;
+    vite?: Omit<UserConfig, "plugins" | "build">;
+}): Promise<UserConfig>;
