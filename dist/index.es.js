@@ -1,10 +1,10 @@
-import r from "@rollup/plugin-node-resolve";
-import _ from "@vitejs/plugin-react";
-import { promises as a } from "node:fs";
-import { join as n } from "node:path";
-import { defineConfig as s } from "vite";
-import { externalizeDeps as l } from "vite-plugin-externalize-deps";
-const t = [
+import l from "@rollup/plugin-node-resolve";
+import s from "@vitejs/plugin-react";
+import { promises as _ } from "node:fs";
+import { join as f } from "node:path";
+import { defineConfig as c } from "vite";
+import { externalizeDeps as m } from "vite-plugin-externalize-deps";
+const a = [
   "@fiftyone/components",
   "@fiftyone/operators",
   "@fiftyone/state",
@@ -19,20 +19,28 @@ const t = [
   "@fiftyone/playback",
   "@fiftyone/spotlight",
   "@fiftyone/flashlight",
-  "@fiftyone/looker-3d",
-  "@mui/material",
+  "@fiftyone/looker-3d"
+], r = [
+  ...a,
   "styled-components",
   "recoil",
   "react",
-  "react-dom"
+  "react-dom",
+  "@mui/material"
 ];
-async function c(o) {
-  const e = n(o, "package.json"), i = await a.readFile(e, "utf-8");
+async function d(n) {
+  const e = f(n, "package.json"), i = await _.readFile(e, "utf-8");
   return JSON.parse(i);
 }
-function m() {
-  const { FIFTYONE_DIR: o } = process.env;
-  if (!o)
+const u = (n, e = !1) => {
+  const i = Object.keys(n.dependencies), o = i.filter(
+    (t) => !r.includes(t) && !t.startsWith("@fiftyone")
+  );
+  return e && i.includes("@mui/material") && o.push("@mui/material"), o;
+};
+function y() {
+  const { FIFTYONE_DIR: n } = process.env;
+  if (!n)
     throw new Error(
       "FIFTYONE_DIR environment variable not set. This is required to resolve @fiftyone/* imports."
     );
@@ -40,39 +48,42 @@ function m() {
     name: "fiftyone-bundle-private-packages",
     enforce: "pre",
     resolveId: (e) => {
-      if (e.startsWith("@fiftyone") && !t.includes(e)) {
-        const i = e.split("/")[1], f = `${o}/app/packages/${i}`;
-        return this.resolve(f, e, { skipSelf: !0 });
+      if (e.startsWith("@fiftyone") && !a.includes(e)) {
+        const i = e.split("/")[1], o = `${n}/app/packages/${i}`;
+        return this.resolve(o, e, { skipSelf: !0 });
       }
       return null;
     }
   };
 }
-async function v(o, e = {}) {
-  const i = await c(o);
-  return s({
+async function b(n, e = {}) {
+  const i = await d(n), o = u(
+    i,
+    e == null ? void 0 : e.forceBundleMui
+  );
+  return console.log(
+    "Bundling the following third party dependencies:",
+    o.join(", ")
+  ), c({
     mode: "development",
     plugins: [
-      m(),
-      r(),
-      _({ jsxRuntime: "classic" }),
-      l({
-        deps: !0,
+      y(),
+      l(),
+      s({ jsxRuntime: "classic" }),
+      m({
+        deps: !1,
         devDeps: !1,
-        useFile: n(process.cwd(), "package.json"),
-        // we want to bundle in the following dependencies and not rely on
-        // them being available in the global scope
-        except: (e == null ? void 0 : e.forceBundleDependencies) ?? [],
-        include: t
+        useFile: f(process.cwd(), "package.json"),
+        include: e != null && e.forceBundleMui ? r.filter((t) => t !== "@mui/material") : r
       }),
       ...(e == null ? void 0 : e.plugins) ?? []
     ],
     build: {
       minify: !0,
       lib: {
-        entry: n(o, i.main),
+        entry: f(n, i.main),
         name: i.name,
-        fileName: (f) => `index.${f}.js`,
+        fileName: (t) => `index.${t}.js`,
         formats: ["umd"]
       },
       rollupOptions: {
@@ -115,5 +126,5 @@ async function v(o, e = {}) {
   });
 }
 export {
-  v as defineConfig
+  b as defineConfig
 };
