@@ -13,6 +13,7 @@ This repo uses ESM but it's transpiled to both ESM and CommonJS so it can be use
 
 ### Bundling and Externalization
 
-- All pacakges declared in the `dependecies` of your plugin's `package.json` are externalized.
-- All packages declared in the `devDependencies` of your plugin's `package.json` are ignored and not bundled.
-- If you want to force bundle any dependencies, you can do so by adding them to the `opts.forceBundleDependencies` array of `defineConfig()`.
+All pacakges declared in the `dependecies` of your plugin's `package.json` are externalized, except for packages starting with `@fiftyone/`, `@mui/material`, `recoil`, `react`, `react-dom`, and `styled-components`. This is because these packages are expected to be provided by the host application.
+
+Note: if you encounter problems with `@mui/material`, you can bundle it in by setting `opts.forceBundleMui`.
+Doing this might have consequences on the theming of the plugin, so it's recommended to avoid it if possible.
